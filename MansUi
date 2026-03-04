@@ -95,26 +95,31 @@ end
 
 -- window
 local Window = WindUI:CreateWindow({
-    Title = "Veroki Hub",
-    Icon = "spiral",
-    Author = "by Baisoku",
-    Folder = "what",
-    Size = UDim2.fromOffset(1000, 460),
+    Title       = "Veroki Hub",
+    Icon        = "square-library",
+    Author      = "by Baisoku/Syfta",
+    Folder      = "VerokiKkk",
+    Size        = UDim2.fromOffset(1000, 460),
     Transparent = true,
-    Background = "rbxassetid://71051763264294",
+    Theme       = "Midnight",
+    Resizable   = true,
+})
+
+Window:Tag({
+    Title  = "v2",
+    Color  = Color3.fromHex("0264FE"),
+    Radius = 15,
 })
 
 Window:EditOpenButton({
-    Title = "Veroki Hub",
-    Icon = "github",
-    CornerRadius = UDim.new(0, 16),
+    Title         = "Open Veroki UI",
+    Icon          = "square-library",
+    CornerRadius  = UDim.new(0, 16),
     StrokeThickness = 2,
-    Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 50, 0))
-    }),
-    Enabled = true,
-    Draggable = true,
+    Color         = ColorSequence.new(Color3.fromHex("0264FE"), Color3.fromHex("7B2FFF")),
+    OnlyMobile    = false,
+    Enabled       = true,
+    Draggable     = true,
 })
 
 Window:SetIconSize(48)
@@ -132,9 +137,9 @@ elseif type(executor) == "string" then
 end
 
 -- tab
-local SrTab = Window:Tab({Title = "server", Icon = "home"})
-local MainTab = Window:Tab({Title = "Player", Icon = "player"})
-local EspTab = Window:Tab({Title = "esp", Icon = "arrow"})
+local SrTab = Window:Tab({Title = "server", Icon = "combat"})
+local MainTab = Window:Tab({Title = "Player", Icon = "sword"})
+local EspTab = Window:Tab({Title = "esp", Icon = "heart"})
 local GameTab = Window:Tab({Title = "Misc", Icon = "circle"})
 local VsTab = Window:Tab({Title = "Visual", Icon = "smile"})
 local WindTab = Window:Tab({Title = "Window", Icon = "laptop"})
@@ -165,6 +170,56 @@ end
 if not getgenv().tracerLines then
     getgenv().tracerLines = {}
 end
+
+-- SrTab
+getgenv().DiscordInfo = getgenv().DiscordInfo or {
+    ServerLink = "https://discord.gg/kzy6cAUVJ",
+    ServerID = 1450681153680969874,
+    NotificationShown = false
+}
+
+SrTab:Space()
+
+SrTab:Paragraph({
+    Title = "Veroki Hub Discord! :]",
+    Desc = "Join our Discord server for updates, support, and community!",
+    Image = "https://cdn.discordapp.com/attachments/1203333550010200175/1281053540044574741/download.png?ex=66fcb6c5&is=66fb6545&hm=12ec10e94d84ff8e06fd14e123796eb775ac48eb3daa2f6bd285626aabf8c0c0&",
+    ImageSize = 48,
+    Buttons = {
+        {
+            Title = "Click This",
+            Icon = "link",
+            Callback = function()
+                setclipboard(getgenv().DiscordInfo.ServerLink)
+                WindUI:Notify({
+                    Title = "Discord",
+                    Content = "Discord link copied to clipboard!",
+                    Duration = 3
+                })
+                getgenv().DiscordInfo.NotificationShown = true
+            end
+        },
+        {
+            Title = "Join Server",
+            Icon = "external-link",
+            Callback = function()
+                pcall(function() 
+                    game:GetService("TeleportService"):Teleport(getgenv().DiscordInfo.ServerID, LocalPlayer) 
+                end)
+            end
+        }
+    }
+})
+
+SrTab:Space()
+
+SrTab:Paragraph({
+    Title = "Credits",
+    Desc = "Script created by SYFTA\nUI Library: WindUI\nSpecial thanks to all testers and supporters!",
+    Image = "https://cdn.discordapp.com/attachments/1203333550010200175/1281053540044574741/download.png?ex=66fcb6c5&is=66fb6545&hm=12ec10e94d84ff8e06fd14e123796eb775ac48eb3daa2f6bd285626aabf8c0c0&",
+    ImageSize = 48,
+    Buttons = {}
+})
 
 --fly and
 local character = nil
@@ -1341,25 +1396,241 @@ MainTab:Input({
 MainTab:Space()
 
 getgenv().GravityEnabled = false
-getgenv().GravityValue = 196.2
+getgenv().GravityValue = 50  -- Diubah dari 196.2 menjadi 50
 getgenv().GravityPosition = getgenv().GravityPosition or UDim2.new(0.5, -110, 0, 60)
 
+-- Jangan set gravity dulu, biarkan sesuai default map
+
 local function createGravityGUI()
-    if PlayerGui:FindFirstChild("GravityGUI") then PlayerGui.GravityGUI:Destroy() end
+if PlayerGui:FindFirstChild("GravityGUI") then PlayerGui.GravityGUI:Destroy() end
+
+local gui = Instance.new("ScreenGui")  
+gui.Name = "GravityGUI"  
+gui.ResetOnSpawn = false  
+gui.Parent = PlayerGui  
+gui.Enabled = false  
+  
+local btn = Instance.new("TextButton")  
+btn.Size = UDim2.new(0, 220, 0, 44)  
+btn.Position = getgenv().GravityPosition  
+btn.AnchorPoint = Vector2.new(0.5, 0)  
+btn.Text = "Gravitasi [OFF]"  
+btn.Font = Enum.Font.Gotham  
+btn.TextSize = 20  
+btn.TextColor3 = Color3.new(1,1,1)  
+btn.AutoButtonColor = false  
+btn.BackgroundTransparency = 0.15  
+btn.Parent = gui  
+  
+local gradient = Instance.new("UIGradient", btn)  
+gradient.Color = ColorSequence.new({  
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(64, 224, 208)),  
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),  
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 149, 237))  
+})  
+gradient.Rotation = 45  
+  
+Instance.new("UICorner", btn).CornerRadius = UDim.new(1,0)  
+  
+local stroke = Instance.new("UIStroke", btn)  
+stroke.Thickness = 1.5  
+stroke.Color = Color3.new(1,1,1)  
+stroke.Transparency = 0.3  
+  
+-- SISTEM DRAG BARU  
+local dragging, dragInput, dragStart, startPos = false, nil, nil, nil  
+  
+local function update(input)  
+    local delta = input.Position - dragStart  
+    btn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)  
+end  
+  
+btn.InputBegan:Connect(function(input)  
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then  
+        dragging = true  
+        dragInput = input  
+        dragStart = input.Position  
+        startPos = btn.Position  
+          
+        input.Changed:Connect(function()  
+            if input.UserInputState == Enum.UserInputState.End then  
+                dragging = false  
+                getgenv().GravityPosition = btn.Position  
+            end  
+        end)  
+    end  
+end)  
+  
+btn.InputChanged:Connect(function(input)  
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then  
+        dragInput = input  
+    end  
+end)  
+  
+UserInputService.InputChanged:Connect(function(input)  
+    if dragging and input == dragInput then  
+        update(input)  
+    end  
+end)  
+  
+btn.MouseEnter:Connect(function()   
+    TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play()   
+end)  
+  
+btn.MouseLeave:Connect(function()   
+    TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play()   
+end)  
+  
+btn.MouseButton1Click:Connect(function()  
+    if not dragging then  
+        getgenv().GravityEnabled = not getgenv().GravityEnabled  
+          
+        if getgenv().GravityEnabled then  
+            workspace.Gravity = getgenv().GravityValue  
+        else  
+            -- Kembalikan ke gravity default map (196.2)
+            workspace.Gravity = 196.2  
+        end  
+          
+        btn.Text = "Gravitasi ["..(getgenv().GravityEnabled and "ON" or "OFF").."]"  
+    end  
+end)  
+  
+return gui
+
+end
+
+local GravityGUI = nil
+
+MainTab:Toggle({
+Title = "Gravity GUI",
+Value = false,
+Callback = function(state)
+if state then
+if not GravityGUI or not GravityGUI.Parent then
+GravityGUI = createGravityGUI()
+end
+GravityGUI.Enabled = true
+else
+if GravityGUI then
+GravityGUI.Enabled = false
+-- Pastikan gravity kembali ke default map saat GUI dimatikan
+if getgenv().GravityEnabled then
+getgenv().GravityEnabled = false
+workspace.Gravity = 196.2
+end
+end
+end
+end
+})
+
+MainTab:Input({
+Title = "Gravity Value",
+Placeholder = tostring(getgenv().GravityValue),
+Value = tostring(getgenv().GravityValue),
+Callback = function(val)
+local n = tonumber(val)
+if n and n > 0 then
+getgenv().GravityValue = n
+-- Hanya update gravity jika toggle GUI aktif DAN gravity dalam keadaan ON
+if GravityGUI and GravityGUI.Enabled and getgenv().GravityEnabled then
+workspace.Gravity = n
+end
+end
+end
+})
+
+MainTab:Space()
+
+getgenv().BackJumpEnabled = false
+getgenv().BackJumpSpeed = 50
+getgenv().BackJumpPosition = getgenv().BackJumpPosition or UDim2.new(0.5, -110, 0, 10)
+
+local maxExtraSpeed = 100
+local minSpeedOffset = 0
+local lastTick = tick()
+local airAccumulator = 0
+local airTotalTime = 0
+local wasAir = false
+local activeBV = nil
+local currentSpeed = getgenv().BackJumpSpeed
+local countingEnabled = false
+local speedometer = nil
+local backJumpGUI = nil
+local backJumpLastJump = 0
+local backJumpJumpCooldown = 0.1
+
+local function truncate1Decimal(val)
+    return math.floor(val * 10) / 10
+end
+
+local function getSpeedometer()
+    local ok, spd = pcall(function()
+        return PlayerGui.Shared.HUD.Overlay.Default.CharacterInfo.Item.Speedometer.Players
+    end)
+    if ok then return spd end
+    return nil
+end
+
+local function IsOnGroundBack()
+    local char = LocalPlayer.Character
+    if not char then return false end
+    local humanoid = char:FindFirstChild("Humanoid")
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if not humanoid or not root then return false end
+
+    local state = humanoid:GetState()
+    if state == Enum.HumanoidStateType.Jumping or 
+       state == Enum.HumanoidStateType.Freefall or
+       state == Enum.HumanoidStateType.Swimming then
+        return false
+    end
+
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+    raycastParams.FilterDescendantsInstances = {char}
+    raycastParams.IgnoreWater = true
+
+    local rayOrigin = root.Position
+    local rayDirection = Vector3.new(0, -4, 0)
+    local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
+
+    if not raycastResult then return false end
+
+    local surfaceNormal = raycastResult.Normal
+    local angle = math.deg(math.acos(surfaceNormal:Dot(Vector3.new(0, 1, 0))))
+
+    return angle <= 45
+end
+
+local oldNewIndex
+if not oldNewIndex then
+    oldNewIndex = hookmetamethod(game, "__newindex", function(self, idx, val)
+        if not checkcaller() and countingEnabled and speedometer and self == speedometer and idx == "Text" then
+            return
+        end
+        return oldNewIndex(self, idx, val)
+    end)
+end
+
+local function createBackJumpGUI()
+    if PlayerGui:FindFirstChild("BackJumpGUI") then 
+        PlayerGui.BackJumpGUI:Destroy() 
+    end
     
     local gui = Instance.new("ScreenGui")
-    gui.Name = "GravityGUI"
+    gui.Name = "BackJumpGUI"
     gui.ResetOnSpawn = false
     gui.Parent = PlayerGui
-    gui.Enabled = false
+    gui.Enabled = true
     
     local btn = Instance.new("TextButton")
     btn.Size = UDim2.new(0, 220, 0, 44)
-    btn.Position = getgenv().GravityPosition
+    btn.Position = getgenv().BackJumpPosition
     btn.AnchorPoint = Vector2.new(0.5, 0)
-    btn.Text = "Gravitasi [OFF]"
+    btn.Text = "Back Jump [OFF]"
     btn.Font = Enum.Font.Gotham
-    btn.TextSize = 20
+    btn.TextSize = 18
     btn.TextColor3 = Color3.new(1,1,1)
     btn.AutoButtonColor = false
     btn.BackgroundTransparency = 0.15
@@ -1380,113 +1651,197 @@ local function createGravityGUI()
     stroke.Color = Color3.new(1,1,1)
     stroke.Transparency = 0.3
     
-    local dragging = false
-    local dragStart, startPos
+    -- SISTEM DRAG BARU
+    local dragging, dragInput, dragStart, startPos = false, nil, nil, nil
     
-    btn.MouseEnter:Connect(function() 
-        if not dragging then
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play() 
-        end
-    end)
-    
-    btn.MouseLeave:Connect(function() 
-        if not dragging then
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play() 
-        end
-    end)
-    
-    btn.MouseButton1Click:Connect(function()
-        if not dragging then
-            getgenv().GravityEnabled = not getgenv().GravityEnabled
-            
-            if getgenv().GravityEnabled then
-                workspace.Gravity = getgenv().GravityValue
-            else
-                workspace.Gravity = 196.2
-            end
-            
-            btn.Text = "Gravitasi ["..(getgenv().GravityEnabled and "ON" or "OFF").."]"
-        end
-    end)
-    
-    local function updateDrag(input)
+    local function update(input)
         local delta = input.Position - dragStart
-        btn.Position = UDim2.new(
-            startPos.X.Scale, 
-            startPos.X.Offset + delta.X,
-            startPos.Y.Scale, 
-            startPos.Y.Offset + delta.Y
-        )
+        btn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
     
     btn.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
+            dragInput = input
             dragStart = input.Position
             startPos = btn.Position
             
-            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.4}):Play()
-            
-            local conn
-            conn = input.Changed:Connect(function()
+            input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
-                    getgenv().GravityPosition = btn.Position
-                    TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play()
-                    conn:Disconnect()
+                    getgenv().BackJumpPosition = btn.Position
                 end
             end)
         end
     end)
     
-    local inputChangedConn
-    inputChangedConn = UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            updateDrag(input)
+    btn.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
         end
     end)
     
-    gui.Destroying:Connect(function()
-        if inputChangedConn then inputChangedConn:Disconnect() end
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input == dragInput then
+            update(input)
+        end
+    end)
+    
+    btn.MouseEnter:Connect(function() 
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play() 
+    end)
+    
+    btn.MouseLeave:Connect(function() 
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play() 
+    end)
+    
+    btn.MouseButton1Click:Connect(function()
+        if not dragging then
+            getgenv().BackJumpEnabled = not getgenv().BackJumpEnabled
+            btn.Text = "Back Jump ["..(getgenv().BackJumpEnabled and "ON" or "OFF").."]"
+            
+            if not getgenv().BackJumpEnabled then
+                if activeBV then
+                    activeBV:Destroy()
+                    activeBV = nil
+                end
+                currentSpeed = getgenv().BackJumpSpeed
+                countingEnabled = false
+                airAccumulator = 0
+                airTotalTime = 0
+                wasAir = false
+            end
+        end
     end)
     
     return gui
 end
 
-local GravityGUI = nil
+RunService.RenderStepped:Connect(function()
+    local deltaTime = tick() - lastTick
+    lastTick = tick()
 
-MainTab:Toggle({
-    Title = "Gravity GUI",
-    Value = false,
-    Callback = function(state)
-        if state then
-            if not GravityGUI or not GravityGUI.Parent then
-                GravityGUI = createGravityGUI()
-            end
-            GravityGUI.Enabled = true
-        else
-            if GravityGUI then
-                GravityGUI.Enabled = false
-                if getgenv().GravityEnabled then
-                    getgenv().GravityEnabled = false
-                    workspace.Gravity = 196.2
+    local char = LocalPlayer.Character
+    if char then
+        local root = char:FindFirstChild("HumanoidRootPart")
+        local humanoid = char:FindFirstChild("Humanoid")
+        if root and humanoid then
+            speedometer = getSpeedometer()
+            local isAir = humanoid.FloorMaterial == Enum.Material.Air
+            local onGround = IsOnGroundBack()
+
+            if getgenv().BackJumpEnabled then
+                local now = tick()
+                if onGround and (now - backJumpLastJump) > backJumpJumpCooldown then
+                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    backJumpLastJump = now
                 end
             end
+
+            if wasAir and not isAir then
+                currentSpeed = math.max(getgenv().BackJumpSpeed - minSpeedOffset, currentSpeed - 10)
+                if speedometer then speedometer.Text = tostring(truncate1Decimal(currentSpeed)) end
+                airTotalTime = 0
+            end
+            wasAir = isAir
+
+            if getgenv().BackJumpEnabled then
+                if isAir then
+                    airAccumulator = airAccumulator + deltaTime
+                    airTotalTime = airTotalTime + deltaTime
+                    while airAccumulator >= 0.04 do
+                        airAccumulator = airAccumulator - 0.04
+                        local increment = math.max(0.1, 2.5 * (0.04 / 1))
+                        currentSpeed = math.min(getgenv().BackJumpSpeed + maxExtraSpeed, currentSpeed + increment)
+                    end
+                else
+                    airAccumulator = 0
+                    currentSpeed = math.max(getgenv().BackJumpSpeed - minSpeedOffset, currentSpeed - 4 * deltaTime)
+                    airTotalTime = 0
+                end
+
+                if activeBV then activeBV:Destroy() end
+
+                local lookDir = camera.CFrame.LookVector
+                lookDir = Vector3.new(-lookDir.X, 0, -lookDir.Z)
+                if lookDir.Magnitude ~= 0 then
+                    lookDir = lookDir.Unit
+                end
+
+                local bv = Instance.new("BodyVelocity")
+                bv.Velocity = lookDir * currentSpeed
+                bv.MaxForce = Vector3.new(4e5, 0, 4e5)
+                bv.P = 1250
+                bv.Parent = root
+                Debris:AddItem(bv, 0.1)
+                activeBV = bv
+
+                countingEnabled = true
+                if speedometer then speedometer.Text = tostring(truncate1Decimal(currentSpeed)) end
+            else
+                if activeBV then activeBV:Destroy() end
+                activeBV = nil
+                currentSpeed = getgenv().BackJumpSpeed
+                countingEnabled = false
+                airAccumulator = 0
+                airTotalTime = 0
+                wasAir = false
+            end
+        end
+    end
+end)
+
+MainTab:Toggle({
+    Title = "Back Jump",
+    Value = false,
+    Callback = function(state)
+        getgenv().BackJumpEnabled = state
+        
+        if state then
+            if not backJumpGUI or not backJumpGUI.Parent then
+                backJumpGUI = createBackJumpGUI()
+            end
+            WindUI:Notify({
+                Title = "Back Jump",
+                Content = "Back Jump + Auto Jump activated",
+                Duration = 2,
+                Icon = "chevrons-right"
+            })
+        else
+            if backJumpGUI then
+                backJumpGUI:Destroy()
+                backJumpGUI = nil
+            end
+            if activeBV then
+                activeBV:Destroy()
+                activeBV = nil
+            end
+            currentSpeed = getgenv().BackJumpSpeed
+            countingEnabled = false
+            airAccumulator = 0
+            airTotalTime = 0
+            wasAir = false
+            WindUI:Notify({
+                Title = "Back Jump",
+                Content = "Back Jump deactivated",
+                Duration = 2,
+                Icon = "chevrons-left"
+            })
         end
     end
 })
 
 MainTab:Input({
-    Title = "Gravity Value",
-    Placeholder = tostring(getgenv().GravityValue),
-    Value = tostring(getgenv().GravityValue),
-    Callback = function(val)
-        local n = tonumber(val)
-        if n and n > 0 then
-            getgenv().GravityValue = n
-            if getgenv().GravityEnabled then
-                workspace.Gravity = n
-            end
+    Title = "Back Jump Speed",
+    Icon = "zap",
+    Placeholder = "Default 50",
+    Value = "50",
+    NumbersOnly = true,
+    Callback = function(input)
+        local val = tonumber(input)
+        if val and val > 0 and val <= 500 then
+            getgenv().BackJumpSpeed = val
+            currentSpeed = val
         end
     end
 })
@@ -1602,19 +1957,48 @@ local function createFrontJumpGUI()
     stroke.Color = Color3.new(1,1,1)
     stroke.Transparency = 0.3
     
-    local dragging = false
-    local dragStart, startPos
+    -- SISTEM DRAG BARU
+    local dragging, dragInput, dragStart, startPos = false, nil, nil, nil
     
-    btn.MouseEnter:Connect(function() 
-        if not dragging then
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play() 
+    local function update(input)
+        local delta = input.Position - dragStart
+        btn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+    
+    btn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragInput = input
+            dragStart = input.Position
+            startPos = btn.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                    getgenv().FrontJumpPosition = btn.Position
+                end
+            end)
         end
     end)
     
-    btn.MouseLeave:Connect(function() 
-        if not dragging then
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play() 
+    btn.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
         end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input == dragInput then
+            update(input)
+        end
+    end)
+    
+    btn.MouseEnter:Connect(function() 
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play() 
+    end)
+    
+    btn.MouseLeave:Connect(function() 
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play() 
     end)
     
     btn.MouseButton1Click:Connect(function()
@@ -1634,47 +2018,6 @@ local function createFrontJumpGUI()
                 wasAirFront = false
             end
         end
-    end)
-    
-    local function updateDrag(input)
-        local delta = input.Position - dragStart
-        btn.Position = UDim2.new(
-            startPos.X.Scale, 
-            startPos.X.Offset + delta.X,
-            startPos.Y.Scale, 
-            startPos.Y.Offset + delta.Y
-        )
-    end
-    
-    btn.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = btn.Position
-            
-            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.4}):Play()
-            
-            local conn
-            conn = input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                    getgenv().FrontJumpPosition = btn.Position
-                    TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play()
-                    conn:Disconnect()
-                end
-            end)
-        end
-    end)
-    
-    local inputChangedConn
-    inputChangedConn = UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            updateDrag(input)
-        end
-    end)
-    
-    gui.Destroying:Connect(function()
-        if inputChangedConn then inputChangedConn:Disconnect() end
     end)
     
     return gui
@@ -1761,7 +2104,7 @@ MainTab:Toggle({
         getgenv().FrontJumpEnabled = state
         
         if state then
-            if not frontJumpGUI then
+            if not frontJumpGUI or not frontJumpGUI.Parent then
                 frontJumpGUI = createFrontJumpGUI()
             end
             WindUI:Notify({
@@ -1805,324 +2148,6 @@ MainTab:Input({
         if val and val > 0 and val <= 500 then
             getgenv().FrontJumpSpeed = val
             currentSpeedFront = val
-        end
-    end
-})
-
-MainTab:Space()
-
-getgenv().BackJumpEnabled = false
-getgenv().BackJumpSpeed = 50
-getgenv().BackJumpPosition = getgenv().BackJumpPosition or UDim2.new(0.5, -110, 0, 10)
-
-local maxExtraSpeed = 100
-local minSpeedOffset = 0
-local lastTick = tick()
-local airAccumulator = 0
-local airTotalTime = 0
-local wasAir = false
-local activeBV = nil
-local currentSpeed = getgenv().BackJumpSpeed
-local countingEnabled = false
-local speedometer = nil
-local backJumpGUI = nil
-local backJumpLastJump = 0
-local backJumpJumpCooldown = 0.1
-
-local function truncate1Decimal(val)
-    return math.floor(val * 10) / 10
-end
-
-local function getSpeedometer()
-    local ok, spd = pcall(function()
-        return PlayerGui.Shared.HUD.Overlay.Default.CharacterInfo.Item.Speedometer.Players
-    end)
-    if ok then return spd end
-    return nil
-end
-
-local function IsOnGroundBack()
-    local char = LocalPlayer.Character
-    if not char then return false end
-    local humanoid = char:FindFirstChild("Humanoid")
-    local root = char:FindFirstChild("HumanoidRootPart")
-    if not humanoid or not root then return false end
-
-    local state = humanoid:GetState()
-    if state == Enum.HumanoidStateType.Jumping or 
-       state == Enum.HumanoidStateType.Freefall or
-       state == Enum.HumanoidStateType.Swimming then
-        return false
-    end
-
-    local raycastParams = RaycastParams.new()
-    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-    raycastParams.FilterDescendantsInstances = {char}
-    raycastParams.IgnoreWater = true
-
-    local rayOrigin = root.Position
-    local rayDirection = Vector3.new(0, -4, 0)
-    local raycastResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
-
-    if not raycastResult then return false end
-
-    local surfaceNormal = raycastResult.Normal
-    local angle = math.deg(math.acos(surfaceNormal:Dot(Vector3.new(0, 1, 0))))
-
-    return angle <= 45
-end
-
-local oldNewIndex
-if not oldNewIndex then
-    oldNewIndex = hookmetamethod(game, "__newindex", function(self, idx, val)
-        if not checkcaller() and countingEnabled and speedometer and self == speedometer and idx == "Text" then
-            return
-        end
-        return oldNewIndex(self, idx, val)
-    end)
-end
-
-local function createBackJumpGUI()
-    if PlayerGui:FindFirstChild("BackJumpGUI") then 
-        PlayerGui.BackJumpGUI:Destroy() 
-    end
-    
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "BackJumpGUI"
-    gui.ResetOnSpawn = false
-    gui.Parent = PlayerGui
-    gui.Enabled = true
-    
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 220, 0, 44)
-    btn.Position = getgenv().BackJumpPosition
-    btn.AnchorPoint = Vector2.new(0.5, 0)
-    btn.Text = "Back Jump [OFF]"
-    btn.Font = Enum.Font.Gotham
-    btn.TextSize = 18
-    btn.TextColor3 = Color3.new(1,1,1)
-    btn.AutoButtonColor = false
-    btn.BackgroundTransparency = 0.15
-    btn.Parent = gui
-    
-    local gradient = Instance.new("UIGradient", btn)
-    gradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(64, 224, 208)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 149, 237))
-    })
-    gradient.Rotation = 45
-    
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(1,0)
-    
-    local stroke = Instance.new("UIStroke", btn)
-    stroke.Thickness = 1.5
-    stroke.Color = Color3.new(1,1,1)
-    stroke.Transparency = 0.3
-    
-    local dragging = false
-    local dragStart, startPos
-    
-    btn.MouseEnter:Connect(function() 
-        if not dragging then
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play() 
-        end
-    end)
-    
-    btn.MouseLeave:Connect(function() 
-        if not dragging then
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play() 
-        end
-    end)
-    
-    btn.MouseButton1Click:Connect(function()
-        if not dragging then
-            getgenv().BackJumpEnabled = not getgenv().BackJumpEnabled
-            btn.Text = "Back Jump ["..(getgenv().BackJumpEnabled and "ON" or "OFF").."]"
-            
-            if not getgenv().BackJumpEnabled then
-                if activeBV then
-                    activeBV:Destroy()
-                    activeBV = nil
-                end
-                currentSpeed = getgenv().BackJumpSpeed
-                countingEnabled = false
-                airAccumulator = 0
-                airTotalTime = 0
-                wasAir = false
-            end
-        end
-    end)
-    
-    local function updateDrag(input)
-        local delta = input.Position - dragStart
-        btn.Position = UDim2.new(
-            startPos.X.Scale, 
-            startPos.X.Offset + delta.X,
-            startPos.Y.Scale, 
-            startPos.Y.Offset + delta.Y
-        )
-    end
-    
-    btn.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = btn.Position
-            
-            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.4}):Play()
-            
-            local conn
-            conn = input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                    getgenv().BackJumpPosition = btn.Position
-                    TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play()
-                    conn:Disconnect()
-                end
-            end)
-        end
-    end)
-    
-    local inputChangedConn
-    inputChangedConn = UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            updateDrag(input)
-        end
-    end)
-    
-    gui.Destroying:Connect(function()
-        if inputChangedConn then inputChangedConn:Disconnect() end
-    end)
-    
-    return gui
-end
-
-RunService.RenderStepped:Connect(function()
-    local deltaTime = tick() - lastTick
-    lastTick = tick()
-
-    local char = LocalPlayer.Character
-    if char then
-        local root = char:FindFirstChild("HumanoidRootPart")
-        local humanoid = char:FindFirstChild("Humanoid")
-        if root and humanoid then
-            speedometer = getSpeedometer()
-            local isAir = humanoid.FloorMaterial == Enum.Material.Air
-            local onGround = IsOnGroundBack()
-
-            if getgenv().BackJumpEnabled then
-                local now = tick()
-                if onGround and (now - backJumpLastJump) > backJumpJumpCooldown then
-                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                    backJumpLastJump = now
-                end
-            end
-
-            if wasAir and not isAir then
-                currentSpeed = math.max(getgenv().BackJumpSpeed - minSpeedOffset, currentSpeed - 10)
-                if speedometer then speedometer.Text = tostring(truncate1Decimal(currentSpeed)) end
-                airTotalTime = 0
-            end
-            wasAir = isAir
-
-            if getgenv().BackJumpEnabled then
-                if isAir then
-                    airAccumulator = airAccumulator + deltaTime
-                    airTotalTime = airTotalTime + deltaTime
-                    while airAccumulator >= 0.04 do
-                        airAccumulator = airAccumulator - 0.04
-                        local increment = math.max(0.1, 2.5 * (0.04 / 1))
-                        currentSpeed = math.min(getgenv().BackJumpSpeed + maxExtraSpeed, currentSpeed + increment)
-                    end
-                else
-                    airAccumulator = 0
-                    currentSpeed = math.max(getgenv().BackJumpSpeed - minSpeedOffset, currentSpeed - 4 * deltaTime)
-                    airTotalTime = 0
-                end
-
-                if activeBV then activeBV:Destroy() end
-
-                local lookDir = camera.CFrame.LookVector
-                lookDir = Vector3.new(-lookDir.X, 0, -lookDir.Z)
-                if lookDir.Magnitude ~= 0 then
-                    lookDir = lookDir.Unit
-                end
-
-                local bv = Instance.new("BodyVelocity")
-                bv.Velocity = lookDir * currentSpeed
-                bv.MaxForce = Vector3.new(4e5, 0, 4e5)
-                bv.P = 1250
-                bv.Parent = root
-                Debris:AddItem(bv, 0.1)
-                activeBV = bv
-
-                countingEnabled = true
-                if speedometer then speedometer.Text = tostring(truncate1Decimal(currentSpeed)) end
-            else
-                if activeBV then activeBV:Destroy() end
-                activeBV = nil
-                currentSpeed = getgenv().BackJumpSpeed
-                countingEnabled = false
-                airAccumulator = 0
-                airTotalTime = 0
-                wasAir = false
-            end
-        end
-    end
-end)
-
-MainTab:Toggle({
-    Title = "Back Jump",
-    Value = false,
-    Callback = function(state)
-        getgenv().BackJumpEnabled = state
-        
-        if state then
-            if not backJumpGUI then
-                backJumpGUI = createBackJumpGUI()
-            end
-            WindUI:Notify({
-                Title = "Back Jump",
-                Content = "Back Jump + Auto Jump activated",
-                Duration = 2,
-                Icon = "chevrons-right"
-            })
-        else
-            if backJumpGUI then
-                backJumpGUI:Destroy()
-                backJumpGUI = nil
-            end
-            if activeBV then
-                activeBV:Destroy()
-                activeBV = nil
-            end
-            currentSpeed = getgenv().BackJumpSpeed
-            countingEnabled = false
-            airAccumulator = 0
-            airTotalTime = 0
-            wasAir = false
-            WindUI:Notify({
-                Title = "Back Jump",
-                Content = "Back Jump deactivated",
-                Duration = 2,
-                Icon = "chevrons-left"
-            })
-        end
-    end
-})
-
-MainTab:Input({
-    Title = "Back Jump Speed",
-    Icon = "zap",
-    Placeholder = "Default 50",
-    Value = "50",
-    NumbersOnly = true,
-    Callback = function(input)
-        local val = tonumber(input)
-        if val and val > 0 and val <= 500 then
-            getgenv().BackJumpSpeed = val
-            currentSpeed = val
         end
     end
 })
@@ -2186,66 +2211,54 @@ local function createLagSwitchGUI()
     stroke.Transparency = 0.3
     stroke.Parent = btn
     
-    local dragging = false
-    local dragStart, startPos
+    -- SISTEM DRAG BARU
+    local dragging, dragInput, dragStart, startPos = false, nil, nil, nil
     
-    btn.MouseEnter:Connect(function() 
-        if not dragging then
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play() 
+    local function update(input)
+        local delta = input.Position - dragStart
+        btn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+    
+    btn.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragInput = input
+            dragStart = input.Position
+            startPos = btn.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                    getgenv().LagSwitchPosition = btn.Position
+                end
+            end)
         end
     end)
     
-    btn.MouseLeave:Connect(function() 
-        if not dragging then
-            TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play() 
+    btn.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
         end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input == dragInput then
+            update(input)
+        end
+    end)
+    
+    btn.MouseEnter:Connect(function() 
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play() 
+    end)
+    
+    btn.MouseLeave:Connect(function() 
+        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play() 
     end)
     
     btn.MouseButton1Click:Connect(function()
         if not dragging then
             triggerLagSwitch()
         end
-    end)
-    
-    local function updateDrag(input)
-        local delta = input.Position - dragStart
-        btn.Position = UDim2.new(
-            startPos.X.Scale, 
-            startPos.X.Offset + delta.X,
-            startPos.Y.Scale, 
-            startPos.Y.Offset + delta.Y
-        )
-    end
-    
-    btn.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = btn.Position
-            
-            TweenService:Create(btn, TweenInfo.new(0.1), {BackgroundTransparency = 0.4}):Play()
-            
-            local conn
-            conn = input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                    getgenv().LagSwitchPosition = btn.Position
-                    TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play()
-                    conn:Disconnect()
-                end
-            end)
-        end
-    end)
-    
-    local inputChangedConn
-    inputChangedConn = UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-            updateDrag(input)
-        end
-    end)
-    
-    gui.Destroying:Connect(function()
-        if inputChangedConn then inputChangedConn:Disconnect() end
     end)
     
     return gui
@@ -2258,7 +2271,7 @@ MainTab:Toggle({
     Value = false,
     Callback = function(state)
         if state then
-            if not lagSwitchGUI then
+            if not lagSwitchGUI or not lagSwitchGUI.Parent then
                 lagSwitchGUI = createLagSwitchGUI()
             end
             lagSwitchGUI.Enabled = true
@@ -3786,7 +3799,7 @@ VsTab:Input({
 
 VsTab:Toggle({
     Title = "Enable replace emote wheel",
-    Value = false,
+    Value = true,
     Callback = function(state)
         replacementEnabled = state
         
@@ -4008,7 +4021,7 @@ if themeDropdown and themeDropdown.Select and getgenv().WindUI and getgenv().Win
     themeDropdown:Select(getgenv().WindUI:GetCurrentTheme())
 end
 
-local currentBackground = "rbxassetid://85878831310179"
+local currentBackground = "rbxassetid://71051763264294"
 
 local function applyBackground(value)
     if value:match("^https?://") and value:match("%.webm") then
@@ -5330,4 +5343,4 @@ GameTab:Toggle({
     end
 })
 
-print("Veroki Hub loaded successfully!")
+print("Veroki Hub loaded successfully :] !")
