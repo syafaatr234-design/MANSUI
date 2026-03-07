@@ -348,7 +348,7 @@ SrTab:Slider({
 })
 
 -- Variabel global untuk AntiNextbot
-local player = LocalPlayer
+local player = LocalPlayer -- Perbaiki: definisikan player
 local nextbotSpawnConnection = nil
 local cachedAttachment = nil
 local lastAttachmentCheck = 0
@@ -2154,163 +2154,6 @@ MainTab:Input({
 
 MainTab:Space()
 
-local function createDemonLagGUI()
-    if PlayerGui:FindFirstChild("DemonGUI") then 
-        PlayerGui.DemonGUI:Destroy() 
-    end
-    
-    local gui = Instance.new("ScreenGui")
-    gui.Name = "DemonGUI"
-    gui.ResetOnSpawn = false
-    gui.Parent = PlayerGui
-    gui.Enabled = true
-    
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 220, 0, 44)
-    btn.Position = getgenv().LagSwitchPosition or UDim2.new(0.5, -110, 0, 120)
-    btn.AnchorPoint = Vector2.new(0.5, 0)
-    btn.Text = "Lag Switch (dmn)"
-    btn.Font = Enum.Font.Gotham
-    btn.TextSize = 20
-    btn.TextColor3 = Color3.new(1, 1, 1)
-    btn.AutoButtonColor = false
-    btn.BackgroundTransparency = 0.15
-    btn.Parent = gui
-    
-    local gradient = Instance.new("UIGradient")
-    gradient.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(64, 224, 208)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 149, 237))
-    })
-    gradient.Rotation = 45
-    gradient.Parent = btn
-    
-    local uiCorner = Instance.new("UICorner")
-    uiCorner.CornerRadius = UDim.new(1, 0)
-    uiCorner.Parent = btn
-    
-    local stroke = Instance.new("UIStroke")
-    stroke.Thickness = 1.5
-    stroke.Color = Color3.new(1, 1, 1)
-    stroke.Transparency = 0.3
-    stroke.Parent = btn
-    
-    -- FFlag setup
-    local fflagEnabled = false
-    
-    local function SetFFlag(val)
-        pcall(function() 
-            setfflag("MaxMissedWorldStepsRemembered", tostring(val)) 
-        end)
-    end
-    
-    -- Toggle FFlag dengan keybind (Ctrl + F)
-    UserInputService.InputBegan:Connect(function(input, gameProcessed)
-        if gameProcessed then return end
-        if input.KeyCode == Enum.KeyCode.F and UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
-            fflagEnabled = not fflagEnabled
-            if fflagEnabled then
-                SetFFlag(500)
-                btn.Text = "FFlag ON"
-                task.wait(0.5)
-                btn.Text = "Lag Switch"
-            else
-                SetFFlag(1)
-                btn.Text = "FFlag OFF"
-                task.wait(0.5)
-                btn.Text = "Lag Switch"
-            end
-        end
-    end)
-    
-    -- Loop untuk maintain FFlag
-    task.spawn(function()
-        while gui.Parent do
-            if fflagEnabled then
-                SetFFlag(500)
-            end
-            task.wait(1)
-        end
-    end)
-    
-    -- SISTEM DRAG BARU
-    local dragging, dragInput, dragStart, startPos = false, nil, nil, nil
-    
-    local function update(input)
-        local delta = input.Position - dragStart
-        btn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-    
-    btn.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragInput = input
-            dragStart = input.Position
-            startPos = btn.Position
-            
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                    getgenv().LagSwitchPosition = btn.Position
-                end
-            end)
-        end
-    end)
-    
-    btn.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input == dragInput then
-            update(input)
-        end
-    end)
-    
-    btn.MouseEnter:Connect(function() 
-        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.3}):Play() 
-    end)
-    
-    btn.MouseLeave:Connect(function() 
-        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundTransparency = 0.15}):Play() 
-    end)
-    
-    local function triggerLagSwitch()
-        local duration = 1 -- Default duration
-        btn.Text = "FREEZING..."
-        task.wait(0.05) 
-        local start = os.clock()
-        while os.clock() - start < duration do end
-        btn.Text = "Lag Switch"
-    end
-    
-    btn.MouseButton1Click:Connect(function()
-        if not dragging then
-            triggerLagSwitch()
-        end
-    end)
-    
-    return gui
-end
-
-local DemonGui = createDemonLagGUI()
-
-if MainTab then
-    MainTab:Toggle({
-        Title = "Lag Switch(Demon)",
-        Value = false,
-        Callback = function(state)
-            if state then
-                DemonGui.Enabled = true
-            else
-                DemonGui.Enabled = false
-            end
-        end
-    })
--- Normal lag switch
 getgenv().LagSwitchDuration = getgenv().LagSwitchDuration or 0.5
 
 local function triggerLagSwitch()
@@ -4141,7 +3984,7 @@ WindTab:Toggle({
     Title = "Lock All GUI",
     Value = false,
     Callback = function(state)
-        setGUILock(state)
+        setGUILock(true)
     end
 })
 
@@ -4149,7 +3992,7 @@ WindTab:Toggle({
     Title = "Unlock All GUI", 
     Value = false,
     Callback = function(state)
-        setGUILock(not state)
+        setGUILock(false)
     end
 })
 
@@ -5500,4 +5343,4 @@ GameTab:Toggle({
     end
 })
 
-print("Veroki Hub loaded successfully!")
+print("Veroki Hub loaded successfully :] !")
