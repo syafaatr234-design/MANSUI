@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WRD Deobfuscator</title>
+
+    <script src="https://unpkg.com/fengari-web/dist/fengari-web.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #0f0f0f;
+            color: white;
+            padding: 30px;
+        }
+
+        .box {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 220px;
+            resize: vertical;
+            background: #1a1a1a;
+            color: white;
+            border: 1px solid #333;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .output-wrap {
+            position: relative;
+        }
+
+        #copyBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #16a34a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h1>WeAreDevs Deobfuscator</h1>
+
+    <textarea id="input" placeholder="Paste obfuscated script here..."></textarea>
+
+    <button onclick="runDeobfuscate()">Deobfuscate</button>
+
+    <div class="output-wrap">
+        <textarea id="output" placeholder="Result..." readonly></textarea>
+        <button id="copyBtn" onclick="copyOutput()">Copy</button>
+    </div>
+</div>
+
+<script type="application/lua" src="deobfuscate.lua"></script>
+
+<script>
+    async function runDeobfuscate() {
+        const input = document.getElementById("input").value;
+
+        if (typeof deobfuscate !== "undefined") {
+            const result = deobfuscate(input);
+            document.getElementById("output").value = result;
+        } else {
+            document.getElementById("output").value = "Lua function not loaded.";
+        }
+    }
+
+    function copyOutput() {
+        const output = document.getElementById("output");
+
+        output.select();
+        output.setSelectionRange(0, 99999);
+
+        navigator.clipboard.writeText(output.value);
+
+        const btn = document.getElementById("copyBtn");
+        btn.innerText = "Copied!";
+
+        setTimeout(() => {
+            btn.innerText = "Copy";
+        }, 1200);
+    }
+</script>
+</body>
+</html>
